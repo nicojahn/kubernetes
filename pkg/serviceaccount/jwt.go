@@ -161,10 +161,22 @@ func signerFromECDSAPrivateKey(keyPair *ecdsa.PrivateKey) (jose.Signer, error) {
 		return nil, fmt.Errorf("failed to derive keyID: %v", err)
 	}
 
-	// Wrap the ECDSA keypair in a JOSE JWK with the designated key ID.
+	// Marshal the private key as PKCS8 
+	pkcs8Bytes, err := x509.MarshalPKCS8PrivateKey(keyPair)
+	if err != nil {
+		return nil, fmt.Errorf("failed to derive keyID: %v", err)
+	}
+	
+	// Get PKCS8 key from marshaled bytes
+	privateKey, err := x509.ParsePKCS8PrivateKey(pkcs8Bytes)
+	if err != nil {
+		return nil, fmt.Errorf("failed to derive keyID: %v", err)
+	}
+
+	// Wrap the ECDSA PKCS8 private key in a JOSE JWK with the designated key ID.
 	privateJWK := &jose.JSONWebKey{
 		Algorithm: string(alg),
-		Key:       keyPair,
+		Key:       privateKey,
 		KeyID:     keyID,
 		Use:       "sig",
 	}

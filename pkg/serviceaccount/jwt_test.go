@@ -104,6 +104,14 @@ AwEHoUQDQgAEH6cuzP8XuD5wal6wf9M6xDljTOPLX2i8uIp/C/ASqiIGUeeKQtX0
 /IR3qCXyThP/dbCiHrF3v1cuhBOHY8CLVg==
 -----END EC PRIVATE KEY-----`
 
+// openssl pkcs8 -topk8 -nocrypt -in ecdsa256.pem
+// Fake value for testing.
+const ecdsaPKCS8PrivateKey = `-----BEGIN PRIVATE KEY-----
+MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgRmZOZSG5qcuM8DYI
+uq5eK+7AEMdO3ldjCAiv+QDUu1GhRANCAAQfpy7M/xe4PnBqXrB/0zrEOWNM48tf
+aLy4in8L8BKqIgZR54pC1fT8hHeoJfJOE/91sKIesXe/Vy6EE4djwItW
+-----END PRIVATE KEY-----`
+
 // openssl ec -in ecdsa256.pem -pubout -out ecdsa256pub.pem
 const ecdsaPublicKey = `-----BEGIN PUBLIC KEY-----
 MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEH6cuzP8XuD5wal6wf9M6xDljTOPL
@@ -188,6 +196,7 @@ func TestTokenGenerateAndValidate(t *testing.T) {
 	if len(ecdsaToken) == 0 {
 		t.Fatalf("no token generated")
 	}
+	t.Logf("Token: %q", ecdsaToken)
 	ecdsaSecret.Data = map[string][]byte{
 		"token": []byte(ecdsaToken),
 	}
